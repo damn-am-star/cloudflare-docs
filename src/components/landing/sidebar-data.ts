@@ -4,6 +4,8 @@ export interface SidebarLink {
 	type: "link";
 	label: string;
 	href: string;
+	/** Product icon name (src/icons/<icon>.svg). */
+	icon?: string;
 }
 
 export interface SidebarGroup {
@@ -22,10 +24,11 @@ export interface SidebarSection {
 	nodes: SidebarNode[];
 }
 
-const link = (label: string, href: string): SidebarLink => ({
+const link = (label: string, href: string, icon?: string): SidebarLink => ({
 	type: "link",
 	label,
 	href,
+	icon,
 });
 
 export const sidebarSections: SidebarSection[] = [
@@ -65,6 +68,10 @@ export const sidebarSections: SidebarSection[] = [
 		],
 	},
 	{
+		heading: "Developer Tools",
+		nodes: [link("Cloudflare CLI", "/cf/", "cf")],
+	},
+	{
 		heading: "Build",
 		nodes: [
 			{
@@ -96,7 +103,8 @@ export const sidebarSections: SidebarSection[] = [
 					link("AI Gateway", "/ai-gateway/"),
 					link("Agents", "/agents/"),
 					link("Agent Memory", "/agent-memory/"),
-					link("Sandbox SDK", "/sandbox/"),
+					link("Wallets", "/wallets/"),
+					link("Sandboxes", "/sandbox/"),
 					link("Vectorize", "/vectorize/"),
 					link("AI Search", "/ai-search/"),
 					link("AI Crawl Control", "/ai-crawl-control/"),
@@ -202,6 +210,13 @@ export const sidebarSections: SidebarSection[] = [
 					link("Spectrum", "/spectrum/"),
 					link("BYOIP", "/byoip/"),
 				],
+			},
+			{
+				type: "group",
+				label: "Monetize",
+				icon: "ph:coins",
+				collapsed: true,
+				nodes: [link("Monetization Gateway", "/monetization-gateway/")],
 			},
 			{
 				type: "group",

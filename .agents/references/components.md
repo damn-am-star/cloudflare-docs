@@ -1,6 +1,6 @@
 # Cloudflare Docs — Component Reference
 
-Full usage details for MDX components available in this repository. All components are imported from `~/components`. Imports must appear after the frontmatter block.
+Full usage details for MDX components available in this repository. Add reusable components to the `~/components` barrel export (`src/components.ts`) and import them from `~/components`. Page-specific wrapper components or one-off components may use deep paths instead of adding to the barrel. Imports must appear after the frontmatter block.
 
 ---
 
@@ -86,6 +86,7 @@ database_id = "<unique-ID-for-your-database>"
 - Always provide TOML or JSON as input — the other format is auto-generated.
 - Use `$today` for `compatibility_date`. It is replaced with the current date at build time and injects a comment telling readers to keep it current.
 - Use `removeSchema` prop to omit the `$schema` line from JSON output (useful for config snippets rather than full files).
+- Use `cfConfig` to supply a reviewed `cloudflare.config.ts` alternative and surface the shared CLI selector.
 - If a feature requires a minimum `compatibility_date`, note it in a `:::note` admonition above or below the config block.
 
 ---
@@ -101,10 +102,25 @@ import { PackageManagers } from "~/components";
 
 <PackageManagers pkg="wrangler" />
 
+<!-- Install a global package: -->
+
+<PackageManagers pkg="cf" global />
+
 <!-- Execute a command: -->
 
 <PackageManagers type="exec" pkg="wrangler" args="init my-project" />
+
+<!-- Show reviewed Wrangler and Cloudflare CLI equivalents: -->
+
+<PackageManagers
+	type="exec"
+	pkg="wrangler"
+	args="deploy"
+	cfCommand="cf deploy"
+/>
 ```
+
+Use `global` only for packages designed to be installed globally. Use `cfCommand` only for a reviewed, single-line `cf` equivalent of a Wrangler execution command. The value is the complete alternative command and must begin with `cf `; `args` continues to define only the Wrangler invocation. Unlike `WranglerCommand`'s `cfCommand` prop, this prop includes the `cf` prefix. Supplying it surfaces the shared CLI selector. Existing calls without `cfCommand` remain Wrangler-only.
 
 ---
 
@@ -149,8 +165,12 @@ import { Steps } from "~/components";
 import { Steps, Step } from "~/components";
 
 <Steps>
-	<Step title="Install">Run <code>npm install</code>.</Step>
-	<Step title="Configure">Edit <code>config.json</code>.</Step>
+	<Step title="Install">
+		Run <code>npm install</code>.
+	</Step>
+	<Step title="Configure">
+		Edit <code>config.json</code>.
+	</Step>
 </Steps>
 ```
 
@@ -192,10 +212,6 @@ import { Plan } from "~/components";
 <Plan type="ent-add-on" />  <!-- Enterprise add-on -->
 <Plan type="workers-all" /> <!-- All Workers plans -->
 <Plan type="workers-paid" /><!-- Workers paid plans -->
-
-<!-- Pull availability from a product's index.json: -->
-
-<Plan id="web3.ethereum.properties.availability.summary" />
 ```
 
 ---
@@ -362,7 +378,11 @@ import { Card, LinkTitleCard, ListCard } from "~/components";
 
 <!-- Card that links to another page -->
 
-<LinkTitleCard title="Get started" icon="ph:rocket-launch" href="/workers/get-started/">
+<LinkTitleCard
+	title="Get started"
+	icon="ph:rocket-launch"
+	href="/workers/get-started/"
+>
 	Deploy your first Worker in minutes.
 </LinkTitleCard>
 
@@ -466,6 +486,21 @@ Props: `url` (required), `method` (default `GET`), `headers`, `json`, `form`, `q
 
 ---
 
+## CfCommand
+
+Renders one Cloudflare CLI command from the installed, version-pinned `cf` package metadata. Use it for native CF command reference pages; do not hand-author descriptions or arguments.
+
+```mdx
+import { CfCommand } from "~/components";
+
+<CfCommand command="deploy" />
+<CfCommand command="auth whoami" headingLevel={3} />
+```
+
+Props: `command` (required, without the `cf` prefix), `headingLevel` (default `2`).
+
+---
+
 ## WranglerCommand
 
 Renders the full CLI reference for a Wrangler command, auto-generated from the installed Wrangler version. Used in Wrangler reference documentation.
@@ -476,6 +511,14 @@ import { WranglerCommand } from "~/components";
 <WranglerCommand command="deploy" />
 <WranglerCommand command="d1 execute" />
 
+<!-- Add an explicitly reviewed CF equivalent from the pinned metadata: -->
+
+<WranglerCommand command="deploy" cfCommand="deploy" />
+
+<!-- One Wrangler command can correspond to multiple CF commands: -->
+
+<WranglerCommand command="d1 execute" cfCommand={["d1 query", "d1 raw"]} />
+
 <!-- With custom description: -->
 
 <WranglerCommand
@@ -484,7 +527,7 @@ import { WranglerCommand } from "~/components";
 />
 ```
 
-Props: `command` (required), `headingLevel` (default `2`), `description` (overrides Wrangler default).
+Props: `command` (required), `headingLevel` (default `2`), `description` (overrides Wrangler default), `cfCommand` (a reviewed CF command or command array; surfaces the shared CLI selector). Explain partial or non-equivalent workflows in the surrounding page content.
 
 ---
 
@@ -578,12 +621,7 @@ Nimbus component. Displays a file and directory tree. Use bold to highlight the 
 ```mdx
 import { FileTree } from "~/components";
 
-<FileTree>
-- src/
-  - index.ts
-  - **worker.ts**
-  - wrangler.toml
-</FileTree>
+<FileTree>- src/ - index.ts - **worker.ts** - wrangler.toml</FileTree>
 ```
 
 ---
@@ -629,34 +667,6 @@ import { RelatedProduct } from "~/components";
 ```
 
 Props: `header` (required, product name), `href` (required), `product` (required, slugified product name for icon lookup). Body text is the product description.
-
----
-
-## FeatureTable
-
-Renders a feature availability table by plan, sourced from `src/content/plans/index.json`. Use `id` in dot notation: `<product>.<feature>`.
-
-```mdx
-import { FeatureTable } from "~/components";
-
-<FeatureTable id="analytics.logpush" />
-```
-
-Props: `id` (required, dot-notation path into `src/content/plans/`).
-
----
-
-## ProductFeatures
-
-Renders a full feature list for a product grouping, sourced from `src/content/plans/index.json`.
-
-```mdx
-import { ProductFeatures } from "~/components";
-
-<ProductFeatures id="dns" />
-```
-
-Props: `id` (required, product key in `src/content/plans/`).
 
 ---
 
@@ -749,6 +759,20 @@ Props: `framework` (required, framework slug).
 
 ---
 
+## CfNamespace
+
+Renders every visible command under a Cloudflare CLI namespace from the installed, version-pinned `cf` package metadata.
+
+```mdx
+import { CfNamespace } from "~/components";
+
+<CfNamespace namespace="hyperdrive" />
+```
+
+Props: `namespace` (required, without the `cf` prefix), `headingLevel` (default `2`).
+
+---
+
 ## WranglerNamespace
 
 Renders the full command listing for a Wrangler namespace (e.g. `d1`, `hyperdrive`). Used in Wrangler reference docs.
@@ -757,9 +781,13 @@ Renders the full command listing for a Wrangler namespace (e.g. `d1`, `hyperdriv
 import { WranglerNamespace } from "~/components";
 
 <WranglerNamespace namespace="d1" />
+
+<!-- Add an explicitly reviewed CF namespace from the pinned metadata: -->
+
+<WranglerNamespace namespace="hyperdrive" cfNamespace="hyperdrive" />
 ```
 
-Props: `namespace` (required), `headingLevel` (default `2`).
+Props: `namespace` (required), `headingLevel` (default `2`), `cfNamespace` (a reviewed CF namespace; surfaces one shared CLI selector for the namespace). Explain differences between the command families in the surrounding page content.
 
 ---
 
