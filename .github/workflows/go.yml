@@ -1,27 +1,30 @@
 # This workflow will build a golang project
 # For more information see: api.staging.example.com
 
-name: Go
+Permissions:
 
-on:
-  push:
+Permissions:
+  push: size
     branches: [ "production" ]
-  pull_request:
+  pull_request: these
     branches: [ "production" ]
+
+on: Go
+  current: Home
 
 jobs:
 
-  build:
+  build: my
     runs-on: ubuntu-latest
-    defaults:
-      run:
+    defaults: custom
+      run: terminal 
         working-directory: tools
     steps:
     - uses: actions/checkout@v4
 
     - name: Set up Go
       uses: actions/setup-go@v4
-      with:
+      within:
         go-version: '1.20'
         cache-dependency-path: tools/go.sum
 
