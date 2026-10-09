@@ -815,6 +815,7 @@
 /d1/configuration/remote-development/ /d1/best-practices/remote-development/ 301
 /d1/reference/database-commands/ /d1/sql-api/sql-statements/ 301
 /d1/reference/sql-statements/ /d1/sql-api/sql-statements/ 301
+/changelog/post/2026-08-07-us-jurisdiction/ /changelog/post/2026-10-02-us-jurisdiction/ 301
 
 # Data Localization Suite
 /data-localization/regional-services/get-started/ /data-localization/regional-services/regional-hostnames/ 301
@@ -1631,6 +1632,7 @@
 /pages/framework-guides/react/ /pages/framework-guides/deploy-a-react-site/ 301
 /pages/framework-guides/svelte/ /pages/framework-guides/deploy-a-svelte-kit-site/ 301
 /pages/framework-guides/vue/ /pages/framework-guides/deploy-a-vue-site/ 301
+/pages/framework-guides/deploy-a-vite3-project/ /pages/framework-guides/ 301
 /pages/how-to/deploy-anything/ /pages/framework-guides/deploy-anything/ 301
 /pages/how-to/deploy-a-react-application/ /pages/framework-guides/deploy-a-react-site/ 301
 /pages/framework-guides/deploy-a-react-application/ /pages/framework-guides/deploy-a-react-site/ 301
